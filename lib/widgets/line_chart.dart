@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
 import 'package:charts_example/main.dart';
-
+import 'package:get/get.dart';
 
 class ChartNico extends RootScene {
   final List<Venta> lista;
@@ -21,18 +21,18 @@ class ChartNico extends RootScene {
       lista,
     );
     addChild(obj);
-    obj.alignPivot(Alignment.bottomCenter);
-    obj.x = obj.pivotX;
-    obj.y = obj.pivotY;
+    // obj.alignPivot(Alignment.bottomCenter);
+    // obj.x = obj.pivotX;
+    // obj.y = obj.pivotY;
 
-    var pic = obj.createPicture();
-    final shape1 = Shape();
-    addChild(shape1);
-    shape1.graphics.drawPicture(pic);
-    // obj.createImage().then((value) {
-    // });
-    obj.visible = false;
-    obj.removeFromParent(true);
+    // var pic = obj.createPicture();
+    // final shape1 = Shape();
+    // addChild(shape1);
+    // shape1.graphics.drawPicture(pic);
+    // // obj.createImage().then((value) {
+    // // });
+    // obj.visible = false;
+    // obj.removeFromParent(true);
     // double counterScale = 0;
     // stage.onEnterFrame.add(() {
     //   counterScale += .01;
@@ -51,48 +51,76 @@ class _Base extends Sprite {
   }
 
   void init() {
-    final maxTotal = lista.fold<double>(
+    lista.forEach((element) => element.total.printInfo());
+    final maxTotalData = lista.fold<double>(
       0.0,
       (v, element) {
         if (v < element.total) v = element.total;
         return v;
       },
     );
-    print(maxTotal);
+    final maxTotal = round(maxTotalData.toInt());
+    // print(maxTotal);
+    // print(round(maxTotal.toInt()));
+    // print(round(maxTotal.toInt()) / 4);
 
     final padding = 40.0;
     w = stage.stageWidth - (padding * 2);
     h = stage.stageHeight - (padding * 2);
-    final lines = Shape();
+    final verticalLines = Shape();
+    final horizontalLines = Shape();
     final container = Sprite();
-    container.addChild(lines);
+
+    container.addChild(verticalLines);
+    container.addChild(horizontalLines);
 
     container.x = 40;
     container.y = 40;
-
-    lines.graphics.lineStyle(
+    
+    verticalLines.graphics.lineStyle(
       5.0,
       Colors.blueGrey.value,
     );
 
     final separatorX = w / lista.length;
-    lines.graphics.moveTo(0.0, 0.0);
-    lines.graphics.lineTo(0.0, h);
+    final separatorY = h / 4;
 
-    lines.graphics.lineTo(w, h);
-    lines.graphics.lineStyle(
+    verticalLines.graphics.moveTo(0.0, 0.0);
+    verticalLines.graphics.lineTo(0.0, h);
+
+    verticalLines.graphics.lineTo(w, h);
+    verticalLines.graphics.lineStyle(
       1,
       Colors.blueGrey.value,
       .5,
     );
+    horizontalLines.graphics.lineStyle(
+      1,
+      Colors.blueGrey.value,
+      .5,
+    );
+    final divisions = maxTotal / 4;
+    for (int i = 0; i < 5; i++) {
+      final tY = i * separatorY;
+      horizontalLines.graphics.moveTo(0, tY);
+      horizontalLines.graphics.lineTo(w, tY);
+
+      final myAxisText = StaticText();
+
+      myAxisText.text = (maxTotal -(divisions * i)).toString();
+      print(tY);
+      myAxisText.y = tY-10;
+      myAxisText.x = -40;
+      container.addChild(myAxisText);
+    }
     for (int i = 0; i < lista.length; i++) {
       final tX = (i + 1) * separatorX;
-      lines.graphics.moveTo(tX, 0);
-      lines.graphics.lineTo(tX, h);
-    }
-    container.graphics.lineStyle(2, Colors.black.value, .9);
+      //linea vertical
 
-    for (int i = 0; i < lista.length; i++) {
+      verticalLines.graphics.moveTo(tX, 0);
+      verticalLines.graphics.lineTo(tX, h);
+      //
+
       final dot = Shape();
       dot.graphics.beginFill(Colors.red.value, .7);
       dot.graphics
@@ -102,7 +130,7 @@ class _Base extends Sprite {
             5.0,
           )
           .endFill();
-      final tX = (i + 1) * separatorX;
+
       container.addChild(dot);
       final percent = 1 - (lista[i].total / maxTotal);
       dot.y = percent * h;
@@ -113,7 +141,15 @@ class _Base extends Sprite {
         container.graphics.lineTo(dot.x, dot.y);
       }
     }
+    container.graphics.lineStyle(2, Colors.black.value, .9);
 
     addChild(container);
+  }
+
+  int round(int n) {
+    final a = (n ~/ 10) * 10;
+    final b = a + 10;
+    final result = (n - a > b - n) ? b : a;
+    return result > n ? result : result + 10;
   }
 }
