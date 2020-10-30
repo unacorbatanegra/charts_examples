@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:graphx/graphx.dart';
-
 import 'package:charts_example/main.dart';
 
-
-
-class LineChart extends RootScene {
+class BarChart extends RootScene {
   final List<Venta> lista;
 
-  LineChart(this.lista);
+  BarChart(this.lista);
   @override
   void init() {
     owner.core.config.useTicker = true;
@@ -22,7 +18,7 @@ class LineChart extends RootScene {
     stage.scene.core.resumeTicker();
     var obj = _Base<Venta>(
       lista,
-      (e)=>e.total,
+      (e) => e.total,
     );
     addChild(obj);
     // obj.alignPivot(Alignment.bottomCenter);
@@ -48,14 +44,14 @@ class LineChart extends RootScene {
 class _Base<T> extends Sprite {
   final List<T> lista;
   final double Function(T) valor;
+
   double h;
   double w;
-  _Base(this.lista,this.valor) {
+  _Base(this.lista, this.valor) {
     onAddedToStage.addOnce(init);
   }
 
   void init() {
-    // lista.forEach((element) => element.total.printInfo());
     final maxTotalData = lista.fold<double>(
       0.0,
       (v, element) {
@@ -117,35 +113,73 @@ class _Base<T> extends Sprite {
       myAxisText.x = -40;
       container.addChild(myAxisText);
     }
+
     for (int i = 0; i < lista.length; i++) {
       final tX = (i + 1) * separatorX;
       //linea vertical
 
       verticalLines.graphics.moveTo(tX, 0);
       verticalLines.graphics.lineTo(tX, h);
+      final percent = 1 - (valor(lista[i]) / maxTotal);
       //
 
-      final dot = Shape();
-      dot.graphics.beginFill(Colors.red.value, .7);
-      dot.graphics
-          .drawCircle(
-            0.0,
-            0.0,
-            5.0,
+      final bar = Shape();
+      bar.graphics.beginFill(Colors.yellow.value,);
+      // bar.graphics
+      //     .drawRect(
+      //       0.0,
+      //       0.0,
+      //       10.0,
+      //       h,
+      //     )
+      //     .endFill();
+      // bar.y = percent * h / 2;
+      // bar.x = tX - 5;
+      // bar.graphics.beginFill(color);
+      final currentY = percent * h;
+      final currentX = tX;
+      final width = 15 / 2;
+      bar.graphics.moveTo(currentX - width, currentY);
+      bar.graphics.lineTo(
+        currentX + width,
+        currentY,
+      );
+      bar.graphics.lineTo(
+        currentX + width,
+        h,
+      );
+      bar.graphics.lineTo(
+        currentX - width,
+        h,
+      );
+      bar.graphics
+          .lineTo(
+            currentX - width,
+            currentY,
           )
           .endFill();
 
-      container.addChild(dot);
-      final percent = 1 - (valor(lista[i]) / maxTotal);
-      dot.y = percent * h;
-      dot.x = tX;
-      if (i == 0) {
-        container.graphics.moveTo(dot.x, dot.y);
-      } else {
-        container.graphics.lineTo(dot.x, dot.y);
-      }
+      container.addChild(bar);
+      // final dot = Shape();
+      // dot.graphics.beginFill(Colors.green.value, .7);
+      // dot.graphics
+      //     .drawCircle(
+      //       0.0,
+      //       0.0,
+      //       5.0,
+      //     )
+      //     .endFill();
+      // container.addChild(dot);
+      // dot.y = percent * h;
+      // dot.x = tX;
+      // if (i == 0) {
+      //   container.graphics.moveTo(dot.x, dot.y);
+      // } else {
+      //   container.graphics.lineTo(dot.x, dot.y);
+      // }
+
     }
-    container.graphics.lineStyle(2, Colors.black.value, .9);
+    // container.graphics.lineStyle(2, Colors.black.value, .9);
 
     addChild(container);
   }
@@ -157,22 +191,3 @@ class _Base<T> extends Sprite {
     return result > n ? result : result + 10;
   }
 }
-
-valor(venta) {
-  return venta.total;
-}
-
-// Algo<Pedido>
-
-// class Algo<T> {
-//   double Function(T) valor;
-//   String Function(T) texto;
-//   final List<T> lista;
-//   Algo({
-//     this.valor,
-//     this.lista,
-//   });
-//   lista.forEach((e)=>valor(e));
-// }
-
-// final venta = Venta(total: 1009);

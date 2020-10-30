@@ -1,10 +1,11 @@
-import 'package:charts_example/widgets/line_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math';
 
 import 'package:graphx/graphx.dart';
+
+import 'widgets/bar_chart.dart';
 
 void main() {
   runApp(
@@ -52,16 +53,22 @@ class _Home extends GetView<HomeController> {
               const SizedBox(
                 height: 36.0,
               ),
-              Container(
-                height: Get.height / 2,
-                width: Get.width,
-                child: SceneBuilderWidget(
-                  builder: () => SceneController.withLayers(
-                    front: ChartNico(
-                      Venta.generate(),
-                    ),
-                  ),
-                ),
+              Obx(
+                () => controller.isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Container(
+                        height: Get.height / 2,
+                        width: Get.width,
+                        child: SceneBuilderWidget(
+                          builder: () => SceneController.withLayers(
+                            front: BarChart(
+                              controller.lista,
+                            ),
+                          ),
+                        ),
+                      ),
               )
             ],
           ),
@@ -72,6 +79,8 @@ class _Home extends GetView<HomeController> {
 }
 
 class HomeController extends GetxController {
+  final lista = <Venta>[].obs;
+  final _isLoading = false.obs;
   @override
   void onInit() {
     obtener();
@@ -79,8 +88,12 @@ class HomeController extends GetxController {
   }
 
   void obtener() async {
-    final lista = Venta.generate();
+    _isLoading.toggle();
+    lista.value = Venta.generate();
+    _isLoading.toggle();
   }
+
+  bool get isLoading => _isLoading.value;
 }
 
 class Venta {
@@ -101,6 +114,38 @@ class Venta {
     for (int i = 1; i <= 20; i++) {
       lista.add(
         Venta(
+          cliente: 'cliente-$i',
+          total: rng.nextInt(100).toDouble(),
+          iva: rng.nextInt(100).toDouble(),
+          date: DateTime.now().subtract(
+            Duration(days: 30 * i),
+          ),
+        ),
+      );
+    }
+    lista.sort((v1, v2) => v1.date.millisecondsSinceEpoch);
+    return lista;
+  }
+}
+
+class Pedido {
+  final DateTime date;
+  final double total;
+  final double iva;
+  final String cliente;
+
+  Pedido({
+    this.date,
+    this.total,
+    this.iva,
+    this.cliente,
+  });
+  static List<Pedido> generate() {
+    final lista = <Pedido>[];
+    final rng = Random();
+    for (int i = 1; i <= 20; i++) {
+      lista.add(
+        Pedido(
           cliente: 'cliente-$i',
           total: rng.nextInt(100).toDouble(),
           iva: rng.nextInt(100).toDouble(),
