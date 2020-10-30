@@ -1,6 +1,8 @@
+import 'package:charts_example/widgets/tooltip_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
 import 'package:charts_example/main.dart';
+import 'package:get/get.dart';
 
 class BarChart extends RootScene {
   final List<Venta> lista;
@@ -60,9 +62,6 @@ class _Base<T> extends Sprite {
       },
     );
     final maxTotal = round(maxTotalData.toInt());
-    // print(maxTotal);
-    // print(round(maxTotal.toInt()));
-    // print(round(maxTotal.toInt()) / 4);
 
     final padding = 40.0;
     w = stage.stageWidth - (padding * 2);
@@ -70,13 +69,27 @@ class _Base<T> extends Sprite {
     final verticalLines = Shape();
     final horizontalLines = Shape();
     final container = Sprite();
-
+    final overlayContainer = Sprite();
+    addChild(overlayContainer);
     container.addChild(verticalLines);
     container.addChild(horizontalLines);
 
     container.x = 40;
     container.y = 40;
 
+    // stage.onEnterFrame.add(
+    //   () {
+    //     print('algo ${DateTime.now().toIso8601String()}');
+    //   },
+    // );
+
+    stage?.onClick?.add(
+      (e) {
+        print('asdasda');
+        e.localX.printInfo();
+        e.localY.printInfo();
+      },
+    );
     verticalLines.graphics.lineStyle(
       5.0,
       Colors.blueGrey.value,
@@ -121,21 +134,12 @@ class _Base<T> extends Sprite {
       verticalLines.graphics.moveTo(tX, 0);
       verticalLines.graphics.lineTo(tX, h);
       final percent = 1 - (valor(lista[i]) / maxTotal);
-      //
 
       final bar = Shape();
-      bar.graphics.beginFill(Colors.yellow.value,);
-      // bar.graphics
-      //     .drawRect(
-      //       0.0,
-      //       0.0,
-      //       10.0,
-      //       h,
-      //     )
-      //     .endFill();
-      // bar.y = percent * h / 2;
-      // bar.x = tX - 5;
-      // bar.graphics.beginFill(color);
+      bar.graphics.beginFill(
+        Colors.yellow.value,
+      );
+
       final currentY = percent * h;
       final currentX = tX;
       final width = 15 / 2;
@@ -144,42 +148,22 @@ class _Base<T> extends Sprite {
         currentX + width,
         currentY,
       );
+      // bar.stage.$onEnterFrame.add(() => print('entro a un bar'));
       bar.graphics.lineTo(
         currentX + width,
-        h,
+        h - 2.5,
       );
       bar.graphics.lineTo(
         currentX - width,
-        h,
+        h - 2.5,
       );
-      bar.graphics
-          .lineTo(
-            currentX - width,
-            currentY,
-          )
-          .endFill();
-
+      bar.graphics.lineTo(
+        currentX - width,
+        currentY,
+      );
+      bar.graphics.closePolygon().endFill();
       container.addChild(bar);
-      // final dot = Shape();
-      // dot.graphics.beginFill(Colors.green.value, .7);
-      // dot.graphics
-      //     .drawCircle(
-      //       0.0,
-      //       0.0,
-      //       5.0,
-      //     )
-      //     .endFill();
-      // container.addChild(dot);
-      // dot.y = percent * h;
-      // dot.x = tX;
-      // if (i == 0) {
-      //   container.graphics.moveTo(dot.x, dot.y);
-      // } else {
-      //   container.graphics.lineTo(dot.x, dot.y);
-      // }
-
     }
-    // container.graphics.lineStyle(2, Colors.black.value, .9);
 
     addChild(container);
   }
