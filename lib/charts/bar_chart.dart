@@ -1,7 +1,8 @@
-import 'package:charts_example/widgets/tooltip_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
+
 import '../main.dart';
+import 'tooltip_overlay.dart';
 
 class BarChart extends SceneRoot {
   final List<Venta> lista;

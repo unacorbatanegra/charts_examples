@@ -1,4 +1,4 @@
-import 'package:charts_example/widgets/line_chart.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,8 +6,8 @@ import 'dart:math';
 
 import 'package:graphx/graphx.dart';
 
-import 'widgets/bar_chart.dart';
-import 'widgets/pie_chart.dart';
+import 'charts/bar_chart.dart';
+import 'charts/pie_chart.dart';
 
 void main() {
   runApp(

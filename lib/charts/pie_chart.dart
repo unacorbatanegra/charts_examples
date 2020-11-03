@@ -32,9 +32,6 @@ class _Base<T> extends Sprite {
   final List<T> lista;
   final double radiusCircle;
   final double Function(T) valor;
-
-  // double h;
-  // double w;
   _Base(
     this.lista,
     this.radiusCircle,
@@ -43,6 +40,11 @@ class _Base<T> extends Sprite {
     onAddedToStage.addOnce(init);
   }
   void init() {
+    final total = lista.fold<double>(
+      0.0,
+      (v, element) => v += valor(element),
+    );
+    
     final circle = Shape();
     final parte = Shape();
     final cX = stage.stageWidth / 2;
@@ -56,9 +58,15 @@ class _Base<T> extends Sprite {
         )
         .endFill();
     addChild(circle);
+    final perimeter = 2 * pi * radiusCircle;
+    print(perimeter);
     // parte.graphics.mask.arc(cx, cy, radius, startAngle, sweepAngle)
     for (int i = 0; i < lista.length; i++) {
       parte.graphics.moveTo(cX, cY);
+      final percent = (valor(lista[i]) / total) * 100;
+      print(
+        'el valor en la lista es ${valor(lista[i])} y su porcentaje es $percent %',
+      );
     }
   }
 
