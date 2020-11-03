@@ -1,3 +1,4 @@
+import 'package:charts_example/widgets/line_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'dart:math';
 import 'package:graphx/graphx.dart';
 
 import 'widgets/bar_chart.dart';
+import 'widgets/pie_chart.dart';
 
 void main() {
   runApp(
@@ -63,7 +65,7 @@ class _Home extends GetView<HomeController> {
                         width: Get.width,
                         child: SceneBuilderWidget(
                           builder: () => SceneController.withLayers(
-                            front: BarChart(
+                            front: PieChart(
                               controller.lista,
                             ),
                           ),
@@ -111,7 +113,7 @@ class Venta {
   static List<Venta> generate() {
     final lista = <Venta>[];
     final rng = Random();
-    for (int i = 1; i <= 20; i++) {
+    for (int i = 1; i <= 10; i++) {
       lista.add(
         Venta(
           cliente: 'cliente-$i',

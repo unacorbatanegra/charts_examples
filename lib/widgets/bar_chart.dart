@@ -1,9 +1,5 @@
-import 'dart:ffi';
-
 import 'package:charts_example/widgets/tooltip_overlay.dart';
 import 'package:flutter/material.dart';
-import 'package:graphx/graphx.dart';
-
 import 'package:graphx/graphx.dart';
 import '../main.dart';
 
@@ -59,7 +55,7 @@ class _Base<T> extends Sprite {
   _Base(this.lista, this.valor) {
     onAddedToStage.addOnce(init);
   }
-
+  void draw() {}
   void init() {
     final maxTotalData = lista.fold<double>(
       0.0,
@@ -77,6 +73,9 @@ class _Base<T> extends Sprite {
     final horizontalLines = Shape();
     final container = Sprite();
 
+    stage.onResized.add(() {
+      container.scale = stage.stageWidth / w;
+    });
     final overlayContainer = Sprite();
 
     addChild(overlayContainer);
@@ -85,10 +84,10 @@ class _Base<T> extends Sprite {
       texto: (e) => '',
     );
     toolTip.name = 'toolTip';
+    container.addChild(toolTip);
 
     container.addChild(verticalLines);
     container.addChild(horizontalLines);
-    container.addChild(toolTip);
     container.x = 40;
     container.y = 40;
 
@@ -141,6 +140,7 @@ class _Base<T> extends Sprite {
       final currentY = percent * h;
       final currentX = tX;
       final width = 15 / 2;
+
       var bar = Bar(
         width,
         currentY,
@@ -148,7 +148,7 @@ class _Base<T> extends Sprite {
         (e) => '',
       );
 
-      bar.y = h;
+      bar.y = h - 2.5;
       bar.x = currentX - 30;
       bars.add(bar);
       bar.scaleY = 0;
@@ -194,6 +194,7 @@ class Bar<T> extends Sprite {
   T data;
   VoidCallback onTap;
   String Function(T) fromString;
+  double scaleInternal = 1;
   Bar(
     this.w,
     this.h,
@@ -216,17 +217,25 @@ class Bar<T> extends Sprite {
           h,
         )
         .endFill();
+    scale = scaleInternal;
     alignPivot(Alignment.bottomCenter);
   }
 
   void init() {
     draw();
-    onMouseClick.add((_) => onTap());
+    onMouseClick.add((_) {
+      onTap();
+      print(h);
+      parent.getChildByName('toolTip').x = this.x - w / 2;
+      parent.getChildByName('toolTip').y = y - h - 50;
+    });
     onMouseDown.add((e) {
       color = Colors.red;
+      scaleInternal = 2;
       draw();
       onMouseOut.addOnce((y) {
         color = Colors.yellow;
+        scaleInternal = 1;
         draw();
       });
     });
