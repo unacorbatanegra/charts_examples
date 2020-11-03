@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:graphx/graphx.dart';
-
 import 'package:charts_example/main.dart';
 
-
-
-class LineChart extends RootScene {
+class LineChart extends SceneRoot {
   final List<Venta> lista;
 
   LineChart(this.lista);
   @override
   void init() {
-    owner.core.config.useTicker = true;
+    config(
+      autoUpdateAndRender: true,
+      usePointer: true,
+    );
   }
 
   @override
   void ready() {
     super.ready();
-    owner.needsRepaint = true;
-    stage.scene.core.resumeTicker();
+
     var obj = _Base<Venta>(
       lista,
-      (e)=>e.total,
+      (e) => e.total,
     );
     addChild(obj);
     // obj.alignPivot(Alignment.bottomCenter);
@@ -50,7 +48,7 @@ class _Base<T> extends Sprite {
   final double Function(T) valor;
   double h;
   double w;
-  _Base(this.lista,this.valor) {
+  _Base(this.lista, this.valor) {
     onAddedToStage.addOnce(init);
   }
 
@@ -127,6 +125,7 @@ class _Base<T> extends Sprite {
 
       final dot = Shape();
       dot.graphics.beginFill(Colors.red.value, .7);
+
       dot.graphics
           .drawCircle(
             0.0,

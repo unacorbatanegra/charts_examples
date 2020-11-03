@@ -8,13 +8,17 @@ class ToolTipOverlay<T> extends Sprite {
   final T value;
   final String Function(T) texto;
   ToolTipOverlay({
-    @required this.texto,
-    @required this.x,
-    @required this.y,
-    @required this.value,
-  }) {
-    onAddedToStage.addOnce(init);
+    this.texto,
+    this.x,
+    this.y,
+    this.value,
+  });
+  @override
+  void addedToStage() {
+    super.addedToStage();
+    init();
   }
+
   void init() {
     var toolTip = Shape();
 
@@ -32,8 +36,7 @@ class ToolTipOverlay<T> extends Sprite {
         fontWeight: FontWeight.bold,
       ),
     );
-    title.text = texto(value);
+    // title.text = texto(value)??'';
     addChild(title);
-    
   }
 }

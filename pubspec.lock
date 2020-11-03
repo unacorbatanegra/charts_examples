@@ -93,10 +93,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: de37e01fda7f6f81258a65505d036a6e957f96ee
+      resolved-ref: c19a6374a6df85986ba9867a1e27bfc4e828d507
       url: "https://github.com/roipeker/graphx.git"
     source: git
-    version: "1.0.0"
+    version: "1.0.0+2"
   intl:
     dependency: "direct main"
     description:

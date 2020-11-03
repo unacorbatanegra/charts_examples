@@ -1,23 +1,30 @@
+import 'dart:ffi';
+
 import 'package:charts_example/widgets/tooltip_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
-import 'package:charts_example/main.dart';
-import 'package:get/get.dart';
 
-class BarChart extends RootScene {
+import 'package:graphx/graphx.dart';
+import '../main.dart';
+
+class BarChart extends SceneRoot {
   final List<Venta> lista;
 
   BarChart(this.lista);
   @override
   void init() {
-    owner.core.config.useTicker = true;
+    // owner.core.config.useTicker = true;
+    // owner.core.config.usePointer = true;
+    config(
+      autoUpdateAndRender: true,
+      usePointer: true,
+    );
   }
 
   @override
   void ready() {
     super.ready();
-    owner.needsRepaint = true;
-    stage.scene.core.resumeTicker();
+
     var obj = _Base<Venta>(
       lista,
       (e) => e.total,
@@ -69,27 +76,22 @@ class _Base<T> extends Sprite {
     final verticalLines = Shape();
     final horizontalLines = Shape();
     final container = Sprite();
+
     final overlayContainer = Sprite();
+
     addChild(overlayContainer);
+
+    var toolTip = ToolTipOverlay<T>(
+      texto: (e) => '',
+    );
+    toolTip.name = 'toolTip';
+
     container.addChild(verticalLines);
     container.addChild(horizontalLines);
-
+    container.addChild(toolTip);
     container.x = 40;
     container.y = 40;
 
-    // stage.onEnterFrame.add(
-    //   () {
-    //     print('algo ${DateTime.now().toIso8601String()}');
-    //   },
-    // );
-
-    stage?.onClick?.add(
-      (e) {
-        print('asdasda');
-        e.localX.printInfo();
-        e.localY.printInfo();
-      },
-    );
     verticalLines.graphics.lineStyle(
       5.0,
       Colors.blueGrey.value,
@@ -127,6 +129,7 @@ class _Base<T> extends Sprite {
       container.addChild(myAxisText);
     }
 
+    final bars = <Bar>[];
     for (int i = 0; i < lista.length; i++) {
       final tX = (i + 1) * separatorX;
       //linea vertical
@@ -135,36 +138,30 @@ class _Base<T> extends Sprite {
       verticalLines.graphics.lineTo(tX, h);
       final percent = 1 - (valor(lista[i]) / maxTotal);
 
-      final bar = Shape();
-      bar.graphics.beginFill(
-        Colors.yellow.value,
-      );
-
       final currentY = percent * h;
       final currentX = tX;
       final width = 15 / 2;
-      bar.graphics.moveTo(currentX - width, currentY);
-      bar.graphics.lineTo(
-        currentX + width,
+      var bar = Bar(
+        width,
         currentY,
+        () {},
+        (e) => '',
       );
-      // bar.stage.$onEnterFrame.add(() => print('entro a un bar'));
-      bar.graphics.lineTo(
-        currentX + width,
-        h - 2.5,
-      );
-      bar.graphics.lineTo(
-        currentX - width,
-        h - 2.5,
-      );
-      bar.graphics.lineTo(
-        currentX - width,
-        currentY,
-      );
-      bar.graphics.closePolygon().endFill();
-      container.addChild(bar);
-    }
 
+      bar.y = h;
+      bar.x = currentX - 30;
+      bars.add(bar);
+      bar.scaleY = 0;
+      bar.tween(
+        duration: 1,
+        scaleY: 1,
+        x: '30',
+        ease: GEase.linear,
+        delay: 1 + i * .1,
+      );
+
+      container.addChild(bars[i]);
+    }
     addChild(container);
   }
 
@@ -173,5 +170,65 @@ class _Base<T> extends Sprite {
     final b = a + 10;
     final result = (n - a > b - n) ? b : a;
     return result > n ? result : result + 10;
+  }
+}
+
+class ModelCoordinate<T> {
+  T data;
+  double x;
+  double y;
+  double radio;
+  ModelCoordinate({
+    this.data,
+    this.x,
+    this.y,
+    this.radio,
+  });
+}
+
+class Bar<T> extends Sprite {
+  String texto;
+  final double w;
+  final double h;
+  Color color;
+  T data;
+  VoidCallback onTap;
+  String Function(T) fromString;
+  Bar(
+    this.w,
+    this.h,
+    this.onTap,
+    this.data,
+  ) {
+    color = Colors.yellow;
+    init();
+  }
+  void draw() {
+    graphics.clear();
+    graphics.beginFill(
+      color.value,
+    );
+    graphics
+        .drawRect(
+          0,
+          0,
+          w,
+          h,
+        )
+        .endFill();
+    alignPivot(Alignment.bottomCenter);
+  }
+
+  void init() {
+    draw();
+    onMouseClick.add((_) => onTap());
+    onMouseDown.add((e) {
+      color = Colors.red;
+      draw();
+      onMouseOut.addOnce((y) {
+        color = Colors.yellow;
+        draw();
+      });
+    });
   }
 }
