@@ -7,7 +7,7 @@ import 'dart:math';
 import 'package:graphx/graphx.dart';
 
 import 'charts/bar_chart.dart';
-import 'charts/pie_chart.dart';
+import 'charts/pie_chart/pie_chart.dart';
 
 void main() {
   runApp(
