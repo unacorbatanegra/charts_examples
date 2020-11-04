@@ -121,7 +121,7 @@ class _Base<T> extends Sprite {
 
       verticalLines.graphics.moveTo(tX, 0);
       verticalLines.graphics.lineTo(tX, h);
-      //
+      
 
       final dot = Shape();
       dot.graphics.beginFill(Colors.red.value, .7);

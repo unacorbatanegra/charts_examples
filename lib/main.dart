@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +6,7 @@ import 'dart:math';
 import 'package:graphx/graphx.dart';
 
 import 'charts/bar_chart.dart';
+import 'charts/line_chart.dart';
 import 'charts/pie_chart/pie_chart.dart';
 
 void main() {

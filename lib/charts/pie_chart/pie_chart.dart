@@ -1,9 +1,9 @@
-import 'package:charts_example/charts/pie_chart/widgets/tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:graphx/graphx.dart';
 
 import '../../main.dart';
+import 'widgets/tooltip.dart';
 
 class PieChart extends SceneRoot {
   final List<Venta> lista;
@@ -26,6 +26,7 @@ class PieChart extends SceneRoot {
       150,
       (e) => e.total,
     );
+
     addChild(obj);
   }
 }
@@ -48,6 +49,7 @@ class _Base<T> extends Sprite {
     );
     final cX = stage.stageWidth / 2;
     final cY = stage.stageHeight / 2;
+    // final container = Sprite();
     // final angleStep = 1 / lista.length * deg2rad(360);
     var currentAngle = 0.0;
     var toolTipPie = ToolTipPie<T>(
@@ -61,8 +63,6 @@ class _Base<T> extends Sprite {
       final angleStep = deg2rad(percent * 360);
       var pie = Pie<T>(
         lista[i],
-        cX: cX,
-        cY: cY,
         currentAngle: currentAngle,
         originalColor: color,
         angleStep: angleStep,
@@ -73,11 +73,25 @@ class _Base<T> extends Sprite {
           toolTipPie.texto = i.toString();
         },
       );
+      pie.x = cX;
+      pie.y = cY;
+      pie.scaleX = 0;
+      pie.scaleY = 0;
+      pie.tween(
+        duration: 1,
+        scaleX: 1,
+        scaleY: 1,
+        ease: GEase.linearToEaseOut,
+        delay: 1 + i * .1,
+      );
       Get.log(
         'El percent es ${(percent * 100).roundToDouble()}%\n su anglestep es de $angleStep\nel current angle es  $currentAngle',
       );
       currentAngle += angleStep;
 
+      pie.$debugBounds = true;
+      // pie;,
+      // );
       addChild(pie);
     }
     print(currentAngle);
@@ -89,8 +103,7 @@ class Pie<T> extends Sprite {
   double currentAngle;
   double angleStep;
   Color originalColor;
-  double cX;
-  double cY;
+
   T data;
   void Function(T) onTap;
   double scaleInternal = 1;
@@ -101,8 +114,6 @@ class Pie<T> extends Sprite {
     this.currentAngle,
     this.angleStep,
     this.originalColor,
-    this.cX,
-    this.cY,
     @required this.onTap,
   }) {
     init();
@@ -112,9 +123,9 @@ class Pie<T> extends Sprite {
     graphics.clear();
     graphics
         .beginFill(color.value)
-        .moveTo(cX, cY)
-        .arc(cX, cY, radiusCircle, currentAngle, angleStep)
-        .lineTo(cX, cY)
+        .moveTo(0.0, 0.0)
+        .arc(0, 0, radiusCircle, currentAngle, angleStep)
+        .lineTo(0, 0)
         .endFill();
   }
 
@@ -122,15 +133,16 @@ class Pie<T> extends Sprite {
     color = originalColor;
     draw();
     onMouseClick.add(
-      (_) {
-        parent.getChildByName('toolTip').x = cX - 50;
-        parent.getChildByName('toolTip').y = cY - 50;
-      },
+      (_) {},
     );
 
     onMouseDown.add(
       (e) {
         // scaleInternal = 2;
+        hitTouch(
+          GxPoint(stage.mouseX, stage.mouseY),
+          true,
+        );
         color = Colors.black;
         draw();
         onMouseUp.addOnce((y) {
