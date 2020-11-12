@@ -254,7 +254,7 @@ class _Base<T> extends Sprite {
     }
     addChild(container);
     var temp = Offset(0.0, 0);
-    
+    verticalLines.graphics.moveTo(listaSprites[0].x, listaSprites[0].y);
 
     for (int i = 1; i < listaSprites.length; i++) {
       final current = Offset(
