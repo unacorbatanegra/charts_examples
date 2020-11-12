@@ -21,7 +21,7 @@ bezierCurveThrough(Graphics g, List<GxPoint> points, [double tension = .25]) {
     return;
   }
 
-  final List<BezierControlPoint> cpoints = <BezierControlPoint>[];
+  final cpoints = <BezierControlPoint>[];
   points.forEach((e) {
     cpoints.add(BezierControlPoint());
   });

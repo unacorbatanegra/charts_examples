@@ -1,3 +1,4 @@
+import 'package:charts_example/charts/line_chart/bezier_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
 import 'package:charts_example/main.dart';
@@ -160,6 +161,7 @@ class _Base<T> extends Sprite {
   }
 
   void init() {
+    final points = <GxPoint>[];
     final maxTotalData = lista.fold<double>(
       0.0,
       (v, element) {
@@ -235,7 +237,6 @@ class _Base<T> extends Sprite {
             5.0,
           )
           .endFill();
-      // _buildDot();
 
       container.addChild(dot);
 
@@ -251,55 +252,10 @@ class _Base<T> extends Sprite {
       }
       // print('la x del punto es ${dot.x} y su Y es ${dot.y}');
       listaSprites.add(dot);
+      points.add(GxPoint(dot.x, dot.y));
     }
     addChild(container);
-    var temp = Offset(0.0, 0);
-    verticalLines.graphics.moveTo(listaSprites[0].x, listaSprites[0].y);
-
-    for (int i = 1; i < listaSprites.length; i++) {
-      final current = Offset(
-        listaSprites[i].x,
-        listaSprites[i].y,
-      );
-
-      final previous = Offset(
-        listaSprites[i - 1].x,
-        listaSprites[i - 1].y,
-      );
-
-      final next = Offset(
-        listaSprites[i + 1 < listaSprites.length ? i + 1 : i].x,
-        listaSprites[i + 1 < listaSprites.length ? i + 1 : i].y,
-      );
-
-      final smoothness = .35;
-      final controlPoint1 = previous + temp;
-
-      temp = ((next - previous) / 2) * smoothness;
-
-      final controlPoint2 = current - temp;
-      verticalLines.graphics
-          .lineStyle(
-            4.0,
-            Colors.green.value,
-          )
-          .moveTo(current.dx, current.dy)
-          .cubicCurveTo(
-            controlPoint1.dx,
-            controlPoint1.dy,
-            controlPoint2.dx,
-            controlPoint2.dy,
-            current.dx,
-            current.dy,
-          )
-          .endFill();
-
-      verticalLines.graphics.lineStyle(
-        2,
-        Colors.black.value,
-        .9,
-      );
-    }
+    bezierCurveThrough(horizontalLines.graphics, points, .25);
   }
 
   int round(int n) {
