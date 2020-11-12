@@ -16,9 +16,10 @@ dependencies:
   get:
   fl_chart: ^0.12.0
   intl: ^0.16.1
-  graphx: 
-    git: https://github.com/roipeker/graphx.git
-    # version: 1.0.0+2
+  graphx:
+    git:
+      url: git@github.com:roipeker/graphx.git
+      ref: 8be98ad0a56338100e9cfc75394798331bc2d914
 
 dev_dependencies:
   flutter_test:

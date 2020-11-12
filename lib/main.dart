@@ -5,9 +5,7 @@ import 'dart:math';
 
 import 'package:graphx/graphx.dart';
 
-import 'charts/bar_chart.dart';
-import 'charts/line_chart.dart';
-import 'charts/pie_chart/pie_chart.dart';
+import 'charts/line_chart/line_chart.dart';
 
 void main() {
   runApp(
@@ -61,11 +59,12 @@ class _Home extends GetView<HomeController> {
                         child: CircularProgressIndicator(),
                       )
                     : Container(
+                        decoration: BoxDecoration(border: Border.all()),
                         height: Get.height / 2,
                         width: Get.width,
                         child: SceneBuilderWidget(
                           builder: () => SceneController.withLayers(
-                            front: PieChart(
+                            front: LineChart(
                               controller.lista,
                             ),
                           ),

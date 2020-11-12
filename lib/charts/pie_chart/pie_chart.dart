@@ -26,7 +26,7 @@ class PieChart extends SceneRoot {
       150,
       (e) => e.total,
     );
-
+    obj.setPosition(stage.stageWidth / 2, stage.stageHeight / 2);
     addChild(obj);
   }
 }
@@ -47,8 +47,9 @@ class _Base<T> extends Sprite {
       0.0,
       (v, element) => v += valor(element),
     );
-    final cX = stage.stageWidth / 2;
-    final cY = stage.stageHeight / 2;
+    // $debugBounds = true;
+    // final cX = stage.stageWidth / 2;
+    // final cY = stage.stageHeight / 2;
     // final container = Sprite();
     // final angleStep = 1 / lista.length * deg2rad(360);
     var currentAngle = 0.0;
@@ -68,30 +69,33 @@ class _Base<T> extends Sprite {
         angleStep: angleStep,
         radiusCircle: radiusCircle,
         onTap: (e) {
-          toolTipPie.x = cX - 20;
-          toolTipPie.y = cY - 20;
+          // toolTipPie.x = cX - 20;
+          // toolTipPie.y = cY - 20;
           toolTipPie.texto = i.toString();
         },
       );
-      pie.x = cX;
-      pie.y = cY;
-      pie.scaleX = 0;
-      pie.scaleY = 0;
+      pie.x = 0;
+      pie.y = 0;
+      pie.scaleX = -1;
+      pie.scaleY = -1;
+      pie.rotation = -2;
+      pie.alpha = 0;
+      
       pie.tween(
+        alpha: 1,
         duration: 1,
         scaleX: 1,
         scaleY: 1,
-        ease: GEase.linearToEaseOut,
-        delay: 1 + i * .1,
+        // colorize: Colors.primaries[i % Colors.primaries.length],
+        rotation: 0,
+        ease: GEase.defaultEasing,
+        delay: .5 + i * .1,
       );
       Get.log(
         'El percent es ${(percent * 100).roundToDouble()}%\n su anglestep es de $angleStep\nel current angle es  $currentAngle',
       );
       currentAngle += angleStep;
 
-      pie.$debugBounds = true;
-      // pie;,
-      // );
       addChild(pie);
     }
     print(currentAngle);
@@ -106,7 +110,7 @@ class Pie<T> extends Sprite {
 
   T data;
   void Function(T) onTap;
-  double scaleInternal = 1;
+  // double scaleInternal = 1;
   Color color;
   Pie(
     this.data, {
@@ -138,17 +142,14 @@ class Pie<T> extends Sprite {
 
     onMouseDown.add(
       (e) {
-        // scaleInternal = 2;
-        hitTouch(
-          GxPoint(stage.mouseX, stage.mouseY),
-          true,
+        print(
+          deg2rad(angleStep),
         );
-        color = Colors.black;
-        draw();
+        scale = 1.1;
+        // draw();
         onMouseUp.addOnce((y) {
-          color = originalColor;
-          // scaleInternal = 1;
-          draw();
+          scale = 1;
+          // draw();
         });
       },
     );

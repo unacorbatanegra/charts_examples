@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
-import 'package:meta/meta.dart';
 
 class ToolTipOverlay<T> extends Sprite {
   final x;
